@@ -6,17 +6,21 @@ using UnityEngine.UI;
 
 public class BoardManager : NetworkBehaviour
 {
+    //this is a 2D array that stores the buttons on the game board so we can reference them in the script
     Button[,] buttons = new Button[3,3];
 
+    //these variables represent refernces to the sprites that are used in the game board
     [SerializeField] private Sprite xSprite, oSprite;
 
     private void Start()
     {
+        //checks for if its the host's turn and starts their timer at the start of the game
         if ((NetworkManager.Singleton.IsHost) && (GameManager.gameManagerInstance.currentTurn.Value == 0))
         {
             GameManager.gameManagerInstance.StartTimer();
         }
 
+        //checks for if its the client's turn and starts their timer at the start of the game
         else if ((!NetworkManager.Singleton.IsHost) && (GameManager.gameManagerInstance.currentTurn.Value == 1))
         {
             GameManager.gameManagerInstance.StartTimer();
@@ -25,6 +29,7 @@ public class BoardManager : NetworkBehaviour
 
     private void Update()
     {
+        //this handles when timer goes to zero on the host or clients turn
         if ((NetworkManager.Singleton.IsHost && GameManager.gameManagerInstance.currentTurn.Value == 0) ||
             (!NetworkManager.Singleton.IsHost && GameManager.gameManagerInstance.currentTurn.Value == 1))
         {
@@ -42,6 +47,7 @@ public class BoardManager : NetworkBehaviour
                     //tell the client to turn their timer on
                     WhenTimerIsZeroClientRpc();
                 }
+
                 //this handles when the client's timer is zero
                 else
                 {
@@ -112,7 +118,7 @@ public class BoardManager : NetworkBehaviour
             GameManager.gameManagerInstance.ValidMovePlaySound();
 
             //call this method to also change the sprite on the client side and other things so the host/client have the same state or are synchronized properly
-            ChangeSpriteClientRpc(row, column);
+            SynchronizeClientRpc(row, column);
 
             //check to see if someone won or tied the game
             CheckResult(row, column);
@@ -138,7 +144,7 @@ public class BoardManager : NetworkBehaviour
             GameManager.gameManagerInstance.ValidMovePlaySound();
 
             //call this method to also change the sprite on the host side and other things so the host/client so the two sides have the same state or are synchronized properly
-            ChangeSpriteServerRpc(row, column);
+            SynchronizeServerRpc(row, column);
 
             //check to see if someone won or tied the game
             CheckResult(row, column);
@@ -147,33 +153,36 @@ public class BoardManager : NetworkBehaviour
 
     //this method synchronizes things on the client side to make both the client and the host have the same state of the game 
     [ClientRpc]
-    private void ChangeSpriteClientRpc(int row, int column)
+    private void SynchronizeClientRpc(int row, int column)
     {
-        //this tells the host that the sprite has changed
+        //this tells the clinet to change the sprite on their version of the game board
         buttons[row, column].GetComponent<Image>().sprite = xSprite;
 
-        //this tells the host that the button has been disabled
+        //this tells the client to disable the button on their version of the game board
         buttons[row, column].interactable = false;
 
+        
         if (!NetworkManager.Singleton.IsHost)
         {
+            //start the timer on the clients side
             GameManager.gameManagerInstance.StartTimer();
         }
     }
 
     //this method synchronizes things on the host side to make both the client and the host have the same state of the game 
     [ServerRpc(RequireOwnership = false)]
-    private void ChangeSpriteServerRpc(int row, int column)
+    private void SynchronizeServerRpc(int row, int column)
     {
-        //this tells the client that the sprite has changed
+        //this tells the host to change the sprite on their version of the game board
         buttons[row, column].GetComponent<Image>().sprite = oSprite;
 
-        //this tells the client that the button has been disabled
+        //this tells the host to disable the button on their version of the game board
         buttons[row, column].interactable = false;
 
-        //this line has be here because only the host has the ability to change this network variable
+        //this tells the host to change to their turn
         GameManager.gameManagerInstance.ChangeTurn();
 
+        //start the timer on the host side
         GameManager.gameManagerInstance.StartTimer();
     }
 
@@ -206,14 +215,14 @@ public class BoardManager : NetworkBehaviour
         if (IsWinner(row, column))
         {
             //call ShowMessage and pass "win" to display win or lose on the game over panel for both the host and client
-            GameManager.gameManagerInstance.ShowMessage("win");
+            GameManager.gameManagerInstance.ShowResult("win");
         }
 
         //if there is a tie
         else if (IsGameATie())
         {
             //call ShowMessage and pass "tie" to display tie on the game over panel for both the host and client
-            GameManager.gameManagerInstance.ShowMessage("tie");
+            GameManager.gameManagerInstance.ShowResult("tie");
         }
     }
 
@@ -222,7 +231,7 @@ public class BoardManager : NetworkBehaviour
     {
         Sprite clickedButtonSprite = buttons[row, column].GetComponent<Image>().sprite;
 
-        //checking column
+        //checking for column win
         if (buttons[0, column].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
             buttons[1, column].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
             buttons[2, column].GetComponentInChildren<Image>().sprite == clickedButtonSprite)
@@ -230,7 +239,7 @@ public class BoardManager : NetworkBehaviour
             return true;
         }
 
-        //checking row
+        //checking for row win
         else if (buttons[row, 0].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
             buttons[row, 1].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
             buttons[row, 2].GetComponentInChildren<Image>().sprite == clickedButtonSprite)
@@ -238,7 +247,7 @@ public class BoardManager : NetworkBehaviour
             return true;
         }
 
-        //checking 1st diagonal
+        //checking for 1st diagonal win
         else if (buttons[0, 0].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
             buttons[1, 1].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
             buttons[2, 2].GetComponentInChildren<Image>().sprite == clickedButtonSprite)
@@ -246,7 +255,7 @@ public class BoardManager : NetworkBehaviour
             return true;
         }
 
-        //checking 2nd diagonal
+        //checking for 2nd diagonal win
         else if (buttons[0, 2].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
         buttons[1, 1].GetComponentInChildren<Image>().sprite == clickedButtonSprite &&
         buttons[2, 0].GetComponentInChildren<Image>().sprite == clickedButtonSprite)

@@ -33,20 +33,28 @@ public class GameManager : NetworkBehaviour
     //this boolean is used to start or stop the timer in code 
     private bool timerRunning = false;
 
+    //this is a refernce to the audio source object that plays all the sounds in the game
     public AudioSource audioSource;
 
+    //this is the sound that plays when the start host button is clicked
     public AudioClip hostButtonClickedSound;
 
+    //this is the sound that plays when the start client button is clicked
     public AudioClip clientButtonClickedSound;
 
+    //this is the sound that plays when the host/client makes a move during their turn
     public AudioClip validMoveSound;
 
+    //this is the sound that plays when the host/client makes a move during their oppents turn
     public AudioClip invalidMoveSound;
 
+    //this is the sound that plays when the host or client wins the game
     public AudioClip wonGameSound;
 
+    //this is the sound that plays when the timer first starts this sounds plays for 20 seconds 
     public AudioClip startingTimerSound;
 
+    //this is the sound that plays when the timer hits the last 10 seconds
     public AudioClip endingTimerSound;
 
     private void Awake()
@@ -70,7 +78,7 @@ public class GameManager : NetworkBehaviour
             //this line is just here for testing purposes may delete later
             Debug.Log("Client with id " + clientId + " joined");
 
-            //checks if there are two clinets(players) connected then it spawns a board.
+            //checks if there are two players the host and the client connected then it spawns a board.
             if ((NetworkManager.Singleton.IsHost) && (NetworkManager.Singleton.ConnectedClients.Count == 2))
             {
                 //hide the logo and StartButtonsPanel on the host side
@@ -136,14 +144,17 @@ public class GameManager : NetworkBehaviour
         audioSource.Play();
     }
 
-    //this function shows the panels and the win, lose, or tie messages on the host/client
-   public void ShowMessage(string message)
+    //this function shows the result panels and the win, lose, or tie messages on the host/client 
+   public void ShowResult(string message)
     {
         if (message.Equals("win"))
         {
             //sets the text of the message of the winner 
             messageText.text = "You Win!";
-            
+
+            //change the color of text to blue for the winner winner
+            messageText.color = Color.blue;
+
             //sets the panel of the winner to visable 
             gameEndPanel.SetActive(true);
 
@@ -151,7 +162,7 @@ public class GameManager : NetworkBehaviour
             GameManager.gameManagerInstance.WonGamePlaySound();
 
             //calls a method to set the loser's message text
-            ShowOpponentMessage("You Lose");
+            ShowOpponentResult("You Lose");
         }
 
         else if (message.Equals("tie"))
@@ -159,36 +170,39 @@ public class GameManager : NetworkBehaviour
             //sets the message text of either the host or client
             messageText.text = "Tie Game";
 
+            //change the color of text to red when theres a tie
+            messageText.color = Color.red;
+
             //sets the panel of either the host or client to visable 
             gameEndPanel.SetActive(true);
         
             //calls a method to set either the host or the client's message text 
-            ShowOpponentMessage("Tie Game");
+            ShowOpponentResult("Tie Game");
         }
     }
 
     //this method is in charge of sending the appropate message to the loser
-    private void ShowOpponentMessage(string message)
+    private void ShowOpponentResult(string message)
     {
         //checks if the instance is the host 
         if (IsHost)
         {
-            //host calls client so client knows to change message text
-            OpponentMessageClientRpc(message);
+            //host calls client so client knows to change message text and set up the results panel on their side
+            ShowOpponentResultClientRpc(message);
         }
 
         //check if instance is the client
         else
         {
-            //client calls host so host knows to change message text
-            OpponentMessageServerRpc(message);
+            //client calls host so host knows to change message text and set up the results panel on their side
+            ShowOpponentResultServerRpc(message);
         }
 
     }
 
-    //this method is called by the host it tells the client to change the message text and make the panel after the game visable
+    //this method is called by the host it tells the client to change the message text and set up the elements in the results panel
     [ClientRpc]
-    private void OpponentMessageClientRpc(string message)
+    private void ShowOpponentResultClientRpc(string message)
     {
         //we need this check here because in our implementation the host is also considered a client, but we only want update clients who are not the host
         if (IsHost)
@@ -198,6 +212,9 @@ public class GameManager : NetworkBehaviour
 
         //change the text of the message on the client's side
         messageText.text = message;
+
+        //change the color of text of the loser or when there is a tie on the client's side
+        messageText.color = Color.red;
 
         //make the panel after the game is over visable on the client's side
         gameEndPanel.SetActive(true);
@@ -209,12 +226,15 @@ public class GameManager : NetworkBehaviour
         audioSource.Stop();
     }
 
-    //this method is called by the client it tells the host to change the message text and make the panel after the game visable
+    //this method is called by the client it tells the host to change the message text and set up the elements in the results panel
     [ServerRpc(RequireOwnership = false)]
-    private void OpponentMessageServerRpc(string message)
+    private void ShowOpponentResultServerRpc(string message)
     {
         //change the text of the message on the host's side
         messageText.text = message;
+
+        //change the color of text of the loser or when there is a tie on the host's side
+        messageText.color = Color.red;
 
         //make the panel after the game is over visable on the host's side
         gameEndPanel.SetActive(true);
@@ -232,6 +252,9 @@ public class GameManager : NetworkBehaviour
         //this checks if the client clicked the restart button
         if (!IsHost)
         {
+            //this stops the winning audio if the restart button is clicked before the winniing audio finishes playing
+            audioSource.Stop();
+
             //make the panel invisible on the client's side
             gameEndPanel.SetActive(false);
 
@@ -242,6 +265,9 @@ public class GameManager : NetworkBehaviour
         //checks if host clicked the restart button
         else
         {
+            //this stops the winning audio if the restart button is clicked before the winniing audio finishes playing
+            audioSource.Stop();
+
             //destroy the current tic-tac-toe board on the host's side
             Destroy(newBoard);
 
@@ -257,10 +283,10 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void RestartGameServerRpc()
     {
-        //destroy the board on the client's side
+        //destroy the board on the client's side this has to be done by the host because only the host can destroy network objects and the board prefab is a network object
         Destroy(newBoard);
 
-        //spawn a new board on the client's side
+        //spawn a new board on the client's side this has to be done by the host because only the host can spawn network objects and the board prefab is a network object
         SpawnBoard();
 
         //hide the game over panel on the host's side
@@ -320,7 +346,8 @@ public class GameManager : NetworkBehaviour
         //update the timer text UI
         timerText.text = updatedTime;
     }
-
+    
+    //this method plays a sound when a valid move is made 
     public void ValidMovePlaySound()
     {
         //set the clip of the audiosource to the validMoveSound 
@@ -330,6 +357,7 @@ public class GameManager : NetworkBehaviour
         audioSource.Play();
     }
 
+    //this method plays a sound when a invalid move is made 
     public void InvalidMovePlaySound()
     {
         //set the clip of the audiosource to the invalidMoveSound 
@@ -339,6 +367,7 @@ public class GameManager : NetworkBehaviour
         audioSource.Play();
     }
 
+    //this method plays a sound when someone wins a game
     public void WonGamePlaySound()
     {
         //set the clip of the audiosource to the wonGameSound 
@@ -348,6 +377,7 @@ public class GameManager : NetworkBehaviour
         audioSource.Play();
     }
 
+    //this method plays a sound when the timer starts 
     public void StartTimerPlaySound()
     {
         //set the clip of the audiosource to the startingImerSound 
@@ -357,6 +387,7 @@ public class GameManager : NetworkBehaviour
         audioSource.Play();
     }
 
+    //this method plays a sound when there are ten seconds left on the timer 
     public void CheckTimerTenSecondsLeft()
     {
         //round the timer value to an integer 
