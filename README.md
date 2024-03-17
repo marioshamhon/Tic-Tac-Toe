@@ -11,6 +11,7 @@ This is how the gameplay works in my version of Tic-Tac-Toe:
     <li>After 30 seconds the player's turn is up and the turn changes to the other player</li>
     <li>After a win or a tie game the game over panel will appear showing who won, who lost or tie and give you option to play again
         <ul>
+            When the play again button is clicked:
             <li>If the host won the game the client starts first in the next game</li>
             <li>If the client won the game then the host starts first in the next game</li>
             <li>If the host made the final move that tied the game the client goes first in the next game</li>
