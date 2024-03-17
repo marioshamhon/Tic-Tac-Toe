@@ -20,7 +20,7 @@ This is how the gameplay works in my version of Tic-Tac-Toe:
     </li>
 </ul>
 
-### <u>Sounds</u>
+### Sounds 
 The following sounds are triggred in the game when:
 <ol>
     <li>"Start Host" button is clicked</li>
