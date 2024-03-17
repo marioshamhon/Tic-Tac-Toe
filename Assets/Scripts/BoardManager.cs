@@ -25,6 +25,19 @@ public class BoardManager : NetworkBehaviour
         {
             GameManager.gameManagerInstance.StartTimer();
         }
+
+
+        //checks for if its not the host turn and sets the waiting for text to active so it shows on the host's side
+        if ((NetworkManager.Singleton.IsHost) && (GameManager.gameManagerInstance.currentTurn.Value == 1))
+        {
+            GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(true);
+        }
+
+        //checks for if its not the client's turn and sets the waiting for text to active so it shows on the client's side
+        else if ((!NetworkManager.Singleton.IsHost) && (GameManager.gameManagerInstance.currentTurn.Value == 0))
+        {
+            GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(true);
+        }
     }
 
     private void Update()
@@ -41,6 +54,9 @@ public class BoardManager : NetworkBehaviour
                     //stop the timmer on the host side  
                     GameManager.gameManagerInstance.StopTimer();
 
+                    //turn on waiting for opponent text
+                    GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(true);
+
                     //change turn to clients turn
                     GameManager.gameManagerInstance.ChangeTurn();
 
@@ -53,6 +69,9 @@ public class BoardManager : NetworkBehaviour
                 {
                     //stop the timer on the client's side  
                     GameManager.gameManagerInstance.StopTimer();
+
+                    //turn on waiting for opponent text
+                    GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(true);
 
                     //tell the host to turn their timer on and change to their turn
                     WhenTimerIsZeroServerRpc();
@@ -114,6 +133,9 @@ public class BoardManager : NetworkBehaviour
             //stops the timer for when the host makes a move
             GameManager.gameManagerInstance.StopTimer();
 
+            //turn on waiting for opponent text
+            GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(true);
+
             //play the sound effect when the host makes a valid move
             GameManager.gameManagerInstance.ValidMovePlaySound();
 
@@ -125,7 +147,6 @@ public class BoardManager : NetworkBehaviour
 
             //changing to the clients turn
             GameManager.gameManagerInstance.ChangeTurn();
-
         }
 
         //if a button is clicked by the client 
@@ -139,6 +160,9 @@ public class BoardManager : NetworkBehaviour
 
             //stops the timer for when the client makes a move
             GameManager.gameManagerInstance.StopTimer();
+
+            //turn on waiting for opponent text
+            GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(true);
 
             //play the sound effect when the client makes a valid move
             GameManager.gameManagerInstance.ValidMovePlaySound();
@@ -166,6 +190,9 @@ public class BoardManager : NetworkBehaviour
         {
             //start the timer on the clients side
             GameManager.gameManagerInstance.StartTimer();
+
+            //turn off waiting for opponent text
+            GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(false);
         }
     }
 
@@ -184,6 +211,9 @@ public class BoardManager : NetworkBehaviour
 
         //start the timer on the host side
         GameManager.gameManagerInstance.StartTimer();
+
+        //turn off waiting for opponent text
+        GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(false);
     }
 
     //switch turn on the client side when the host's timer goes down to zero
@@ -193,6 +223,10 @@ public class BoardManager : NetworkBehaviour
         //start the timer on the client's side when the timer on the host side goes down to zero 
         if (!NetworkManager.Singleton.IsHost)
         {
+            //turn off waiting for opponent text
+            GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(false);
+
+            //tell client to start the timer fr their turn
             GameManager.gameManagerInstance.StartTimer();
         }
     }
@@ -201,6 +235,9 @@ public class BoardManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void WhenTimerIsZeroServerRpc()
     {
+        //turn off waiting for opponent text
+        GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(false);
+
         //start the timer on the host's side when the timer on the client side goes down to zero 
         GameManager.gameManagerInstance.StartTimer();
 

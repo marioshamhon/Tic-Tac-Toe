@@ -27,6 +27,9 @@ public class GameManager : NetworkBehaviour
     //this represents the time displayed in the UI for the timer
     public TextMeshProUGUI timerText;
 
+    //this represents the "Waiting for opponent" UI object
+    public TextMeshProUGUI waitingForOpponent;
+
     //this keeps track of the actual time of the timer. Initially the timer starts at 30 seconds
     public float timerValue = 30;
 
@@ -158,6 +161,9 @@ public class GameManager : NetworkBehaviour
             //sets the panel of the winner to visable 
             gameEndPanel.SetActive(true);
 
+            //turn off waiting for opponent text
+            waitingForOpponent.gameObject.SetActive(false);
+
             //play the sound effect when someone wins the game
             GameManager.gameManagerInstance.WonGamePlaySound();
 
@@ -175,7 +181,10 @@ public class GameManager : NetworkBehaviour
 
             //sets the panel of either the host or client to visable 
             gameEndPanel.SetActive(true);
-        
+
+            //turn off waiting for opponent text
+            waitingForOpponent.gameObject.SetActive(false);
+
             //calls a method to set either the host or the client's message text 
             ShowOpponentResult("Tie Game");
         }
