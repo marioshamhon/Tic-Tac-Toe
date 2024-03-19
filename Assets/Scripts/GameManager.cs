@@ -261,7 +261,7 @@ public class GameManager : NetworkBehaviour
         //this checks if the client clicked the restart button
         if (!IsHost)
         {
-            //this stops the winning audio if the restart button is clicked by the client before the winning audio finishes playing
+            //this stops the winning audio if the restart button is clicked by the client when they win the game before the winning audio finishes playing
             audioSource.Stop();
 
             //make the panel invisible on the client's side
@@ -274,7 +274,7 @@ public class GameManager : NetworkBehaviour
         //checks if host clicked the restart button
         else
         {
-            //this stops the winning audio if the restart button is clicked by the host before the winning audio finishes playing
+            //this stops the winning audio if the restart button is clicked by the host when they win the game before the winning audio finishes playing
             audioSource.Stop();
 
             //destroy the current tic-tac-toe board on the host's side
@@ -292,7 +292,7 @@ public class GameManager : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void RestartGameServerRpc()
     {
-        //this stops the winning audio on the host's side if the restart button is clicked by the client telling the host to stop playing the audio
+        //this stops the winning audio on the host's side if the restart button is clicked by the client when the client loses the game telling the host to stop playing the audio
         audioSource.Stop();
 
         //destroy the board on the client's side this has to be done by the host because only the host can destroy network objects and the board prefab is a network object
@@ -310,7 +310,7 @@ public class GameManager : NetworkBehaviour
 
     private void RestartGameClientRpc()
     {
-        //this stops the winning audio on the client's side if the restart button is clicked by the host telling the client to stop playing the audio
+        //this stops the winning audio on the client's side if the restart button is clicked by the host when the host loses the game telling the client to stop playing the audio
         audioSource.Stop();
 
         //hide the game over panel on the client's side
