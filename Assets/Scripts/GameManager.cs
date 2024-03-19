@@ -9,7 +9,7 @@ public class GameManager : NetworkBehaviour
     //this network variable keeps track of whose turn it is
     public NetworkVariable<int> currentTurn = new NetworkVariable<int>(0);
 
-    //this is an instance of the GameManager script this is used to access methods or variables from the BoardManager script
+    //this is an instance of the GameManager script this is used to access methods or variables in the GameManager script from the BoardManager script
     public static GameManager gameManagerInstance;
 
     //this variable represents the tic-tac-toe board game prefab
@@ -36,7 +36,7 @@ public class GameManager : NetworkBehaviour
     //this boolean is used to start or stop the timer in code 
     private bool timerRunning = false;
 
-    //this is a refernce to the audio source object that plays all the sounds in the game
+    //this is a reference to the audio source object that plays all the sounds in the game
     public AudioSource audioSource;
 
     //this is the sound that plays when the start host button is clicked
@@ -48,7 +48,7 @@ public class GameManager : NetworkBehaviour
     //this is the sound that plays when the host/client makes a move during their turn
     public AudioClip validMoveSound;
 
-    //this is the sound that plays when the host/client makes a move during their oppents turn
+    //this is the sound that plays when the host/client tries to make a move during their oppents turn
     public AudioClip invalidMoveSound;
 
     //this is the sound that plays when the host or client wins the game
@@ -78,10 +78,7 @@ public class GameManager : NetworkBehaviour
         //this handles when a client joins the server 
         NetworkManager.Singleton.OnClientConnectedCallback += (clientId) =>
         {
-            //this line is just here for testing purposes may delete later
-            Debug.Log("Client with id " + clientId + " joined");
-
-            //checks if there are two players the host and the client connected then it spawns a board.
+            //checks if there are two players the host and the client connected
             if ((NetworkManager.Singleton.IsHost) && (NetworkManager.Singleton.ConnectedClients.Count == 2))
             {
                 //hide the logo and StartButtonsPanel on the host side
@@ -95,7 +92,6 @@ public class GameManager : NetworkBehaviour
             }
         };
     }
-
     private void Update()
     {
         //check if the timer is running
@@ -125,6 +121,7 @@ public class GameManager : NetworkBehaviour
     //this method makes someone the host
     public void StartHost()
     {
+        //makes someone the host
         NetworkManager.Singleton.StartHost();
 
         //set the clip of the audiosource to the hostButtonClickedSound 
@@ -138,6 +135,7 @@ public class GameManager : NetworkBehaviour
     //this method makes someone a client
     public void StartClient()
     {
+        //makes someone the client
         NetworkManager.Singleton.StartClient();
 
         //set the clip of the audiosource to the clientButtonClickedSound 
@@ -147,15 +145,16 @@ public class GameManager : NetworkBehaviour
         audioSource.Play();
     }
 
-    //this function shows the result panels and the win, lose, or tie messages on the host/client 
+    //this function shows the result panels and the win, lose, or tie messages on the host/client in the result of a win or tie game
    public void ShowResult(string message)
     {
+        //handles when someone wins the game
         if (message.Equals("win"))
         {
             //sets the text of the message of the winner 
             messageText.text = "You Win!";
 
-            //change the color of text to blue for the winner winner
+            //change the color of text to blue for the winner
             messageText.color = Color.blue;
 
             //sets the panel of the winner to visable 
@@ -171,6 +170,7 @@ public class GameManager : NetworkBehaviour
             ShowOpponentResult("You Lose");
         }
 
+        //handles when someone ties the game
         else if (message.Equals("tie"))
         {
             //sets the message text of either the host or client
@@ -228,7 +228,7 @@ public class GameManager : NetworkBehaviour
         //make the panel after the game is over visable on the client's side
         gameEndPanel.SetActive(true);
 
-        //stop the timer for the loser
+        //stop the timer
         StopTimer();
 
         //stop playing the timer sound on the client side when the host wins or ties the game
@@ -248,7 +248,7 @@ public class GameManager : NetworkBehaviour
         //make the panel after the game is over visable on the host's side
         gameEndPanel.SetActive(true);
 
-        //stop the timer for the loser
+        //stop the timer
         StopTimer();
 
         //stop playing the timer sound on the server side when the client wins or ties the game
@@ -339,7 +339,7 @@ public class GameManager : NetworkBehaviour
     //this method is in charge stopping/hiding the timer
     public void StopTimer()
     {
-        //enable the text property of timer UI text
+        //disable the text property of timer UI text
         timerText.enabled = false;
 
         //set the timeRunning variable to false to effectively stop/disable the timer

@@ -216,22 +216,22 @@ public class BoardManager : NetworkBehaviour
         GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(false);
     }
 
-    //switch turn on the client side when the host's timer goes down to zero
+    //handle things on the client side when the host's timer goes down to zero
     [ClientRpc]
     private void WhenTimerIsZeroClientRpc()
     {
-        //start the timer on the client's side when the timer on the host side goes down to zero 
+        //check if your the client when the timer hits zero 
         if (!NetworkManager.Singleton.IsHost)
         {
             //turn off waiting for opponent text
             GameManager.gameManagerInstance.waitingForOpponent.gameObject.SetActive(false);
 
-            //tell client to start the timer fr their turn
+            //tell client to start the timer for their turn
             GameManager.gameManagerInstance.StartTimer();
         }
     }
 
-    //switch turn on the host side when the client's timer goes down to zero
+    //handle things on the host side when the client's timer goes down to zero
     [ServerRpc(RequireOwnership = false)]
     private void WhenTimerIsZeroServerRpc()
     {
@@ -251,14 +251,14 @@ public class BoardManager : NetworkBehaviour
         //if there is a win 
         if (IsWinner(row, column))
         {
-            //call ShowMessage and pass "win" to display win or lose on the game over panel for both the host and client
+            //call ShowResult and pass "win" to display win or lose on the game over panel for both the host and client
             GameManager.gameManagerInstance.ShowResult("win");
         }
 
         //if there is a tie
         else if (IsGameATie())
         {
-            //call ShowMessage and pass "tie" to display tie on the game over panel for both the host and client
+            //call ShowResult and pass "tie" to display tie on the game over panel for both the host and client
             GameManager.gameManagerInstance.ShowResult("tie");
         }
     }

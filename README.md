@@ -45,5 +45,18 @@ The following art is included in this game:
     <li>A texture to the play again button</li>
 </ul>
 
+### How to play the game
+Follow these steps to create two instances of the game where one instance is the host and the other instance is the client: 
+<ol>
+    <li>Download this project from this repository, save it somewhere on your device, and unzip the files.</li>
+    <li>Launch Unity and open the project in Unity</li>
+    <li>In Unity select "file" > "build and run" choose somewhere on your device to save the build</li>
+    <li>Now an instance of the game will launch this will act as one instance</li>
+    <li>In the Unity editor click the play button this will act as the second instance of the game</li>
+    <li>In one instance click the "Start Host" button this will make this instance the host</li>
+    <li>In the other instance click the "Start Client" button this will make this instance the client</li>
+    <li>Play the game. Have Fun!</li>
+</ol>
+
 
  
