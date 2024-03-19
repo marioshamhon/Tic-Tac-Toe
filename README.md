@@ -23,21 +23,21 @@ This is how the gameplay works in my version of Tic-Tac-Toe:
 ### Sounds 
 The following sounds are triggred in the game when:
 <ol>
-    <li>"Start Host" button is clicked</li>
-    <li>"Start Client" button is clicked</li>
+    <li>The "Start Host" button is clicked</li>
+    <li>The "Start Client" button is clicked</li>
     <li>A host or client makes a move on their turn</li>
-    <li>A host or client makes a move when it isn't their turn</li>
-    <li>the timer first starts up to twenty seconds</li>
-    <li>the timer first reaches ten seconds</li>
+    <li>A host or client makes an invalid move when it isn't their turn</li>
+    <li>The timer first starts up to twenty seconds</li>
+    <li>The timer first reaches ten seconds</li>
     <li>A host or client wins the game</li>
 </ol>
 
 ### Art
 The following art is included in this game:
 <ul>
-    <li>A texture to start host button</li>
-    <li>A texture to start client button</li>
-    <li>A texture to panel that the start host and start client buttons are on </li>
+    <li>A texture to the start host button</li>
+    <li>A texture to the start client button</li>
+    <li>A texture to the panel that the start host and start client buttons are on </li>
     <li>A texture to the tic-tac-toe board to show the grid lines </li>
     <li>A texture to the buttons on the tic-tac-toe that represent the cells to make them look more defined </li>
     <li>An "X" sprite or an "O" sprite will be displayed in a cell when a move is made</li>
@@ -48,7 +48,7 @@ The following art is included in this game:
 ### How to play the game
 Follow these steps to set up the game: 
 <ol>
-    <li>Download this project from this repository, save it somewhere on your device, and unzip the files.</li>
+    <li>Download this project from this repository, save it somewhere on your device, and unzip the files</li>
     <li>Launch Unity and open the project in Unity</li>
     <li>In Unity in the projects panel open the "Scenes" folder and open the "MainScene"</li>
     <li>In unity in the game view tab change the Display 1 resolution to 1440 X 2560</li>
