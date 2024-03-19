@@ -46,7 +46,7 @@ The following art is included in this game:
 </ul>
 
 ### How to play the game
-Follow these steps to create two instances of the game where one instance is the host and the other instance is the client: 
+Follow these steps to set up the game: 
 <ol>
     <li>Download this project from this repository, save it somewhere on your device, and unzip the files.</li>
     <li>Launch Unity and open the project in Unity</li>
