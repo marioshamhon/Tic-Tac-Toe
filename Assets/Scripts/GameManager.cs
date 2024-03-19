@@ -190,7 +190,7 @@ public class GameManager : NetworkBehaviour
         }
     }
 
-    //this method is in charge of sending the appropate message to the loser
+    //this method is in charge of sending the appropate message to the opponent 
     private void ShowOpponentResult(string message)
     {
         //checks if the instance is the host 
