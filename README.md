@@ -50,12 +50,14 @@ Follow these steps to set up the game:
 <ol>
     <li>Download this project from this repository, save it somewhere on your device, and unzip the files.</li>
     <li>Launch Unity and open the project in Unity</li>
+    <li>In Unity in the projects panel open the "Scenes" folder and open the "MainScene"</li>
+    <li>In unity in the game view tab change the Display 1 resolution to 1440 X 2560</li>
     <li>In Unity select "file" > "build and run" choose somewhere on your device to save the build</li>
     <li>Now an instance of the game will launch this will act as one instance</li>
     <li>In the Unity editor click the play button this will act as the second instance of the game</li>
     <li>In one instance click the "Start Host" button this will make this instance the host</li>
     <li>In the other instance click the "Start Client" button this will make this instance the client</li>
-    <li>Play the game. Have Fun!</li>
+    <li>Start Playing the game. Have Fun!</li>
 </ol>
 
 
